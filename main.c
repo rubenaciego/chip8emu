@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <SDL.h>
+#include <Windows.h>
 #include "chip8.h"
 
-#define WIDTH 640
-#define HEIGHT 320
+#define PIXEL_SCALE 15
 
 uint8_t running = 1;
 
@@ -19,6 +19,9 @@ uint8_t keymap[] = {
 
 int main(int argc, char* argv[])
 {
+    struct Chip8 chip8;
+    load_rom(&chip8, argv[1]);
+
     if (SDL_Init(SDL_INIT_EVERYTHING) < 0)
     {
         printf("Error initializing SDL: %s\n", SDL_GetError());
@@ -26,7 +29,7 @@ int main(int argc, char* argv[])
     }
 
     SDL_Window* window = SDL_CreateWindow("CHIP-8", SDL_WINDOWPOS_CENTERED,
-        SDL_WINDOWPOS_CENTERED, WIDTH, HEIGHT, SDL_WINDOW_SHOWN);
+        SDL_WINDOWPOS_CENTERED, PIXEL_SCALE * 64, PIXEL_SCALE * 32, SDL_WINDOW_SHOWN);
 
     if (window == NULL)
     {
@@ -44,8 +47,11 @@ int main(int argc, char* argv[])
 
     SDL_Event event;
 
-    struct Chip8 chip8;
-    load_rom(&chip8, argv[1]);
+    LARGE_INTEGER frequency;
+    LARGE_INTEGER t1, t2;
+    double elapsed_time;
+    QueryPerformanceFrequency(&frequency);
+    QueryPerformanceCounter(&t1);
 
     while (running)
     {
@@ -77,7 +83,14 @@ int main(int argc, char* argv[])
             }
         }
 
-        emulate_cycle(&chip8);
+        QueryPerformanceCounter(&t2);
+        elapsed_time = (t2.QuadPart - t1.QuadPart) * 1000000.0 / frequency.QuadPart;
+
+        if (elapsed_time > CHIP8_FREQ)
+        {
+            emulate_cycle(&chip8);
+            QueryPerformanceCounter(&t1);
+        }
 
         if (chip8.draw)
         {
@@ -86,16 +99,16 @@ int main(int argc, char* argv[])
             SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
 
             SDL_Rect pixel;
-            pixel.h = 10;
-            pixel.w = 10;
+            pixel.h = PIXEL_SCALE;
+            pixel.w = PIXEL_SCALE;
 
             for (int x = 0; x < 64; x++)
             {
-                pixel.x = x * 10;
+                pixel.x = x * PIXEL_SCALE;
 
                 for (int y = 0; y < 32; y++)
                 {
-                    pixel.y = y * 10;
+                    pixel.y = y * PIXEL_SCALE;
 
                     if (chip8.graphics[x + y * 64])
                         SDL_RenderFillRect(renderer, &pixel);

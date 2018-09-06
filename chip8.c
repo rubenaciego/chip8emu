@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <Windows.h>
 #include "chip8.h"
 
 uint8_t fontset[80] = { 
@@ -28,6 +29,7 @@ void init(struct Chip8* chip8)
 	chip8->opcode = 0;
 	chip8->I = 0;
 	chip8->sp = 0;
+	chip8->instruction_num = 0;
 
 	for(int i = 0; i < 2048; i++)
 		chip8->graphics[i] = 0;
@@ -332,17 +334,24 @@ void emulate_cycle(struct Chip8* chip8)
 			}
 		
 		break;
-	}	
+	}
 
-	if(chip8->delay_timer > 0)
-		chip8->delay_timer--;
+	chip8->instruction_num++;
 
-	if(chip8->sound_timer > 0)
+	if (chip8->instruction_num == 9)
 	{
-		if(chip8->sound_timer == 1)
-			printf("Sound now!\n");
-		chip8->sound_timer--;
-	}	
+		if(chip8->delay_timer > 0)
+			chip8->delay_timer--;
+
+		if(chip8->sound_timer > 0)
+		{
+			if(chip8->sound_timer == 1)
+				Beep(750, 160);
+			chip8->sound_timer--;
+		}
+
+		chip8->instruction_num = 0;
+	}
 }
 
 void debug_render(struct Chip8* chip8)

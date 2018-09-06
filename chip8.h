@@ -3,6 +3,8 @@
 
 #include <stdint.h>
 
+#define CHIP8_FREQ 1.0 / 540.0 * 1000000.0
+
 struct Chip8 
 {
 	uint8_t draw;
@@ -20,6 +22,8 @@ struct Chip8
 			
 	uint8_t delay_timer;
 	uint8_t sound_timer;
+
+	uint8_t instruction_num;
 };
 
 void emulate_cycle(struct Chip8* chip8);
