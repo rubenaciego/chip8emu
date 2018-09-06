@@ -64,7 +64,7 @@ void emulate_cycle(struct Chip8* chip8)
 			switch (chip8->opcode & 0x000F)
 			{
 			case 0x0000:
-				for(int i = 0; i < 2048; i++)
+				for (int i = 0; i < 2048; i++)
 					chip8->graphics[i] = 0x0;
 
 				chip8->draw = 1;
