@@ -223,7 +223,7 @@ void emulate_cycle(struct Chip8* chip8)
 				{
 					if ((pixel & (0x80 >> xline)) != 0)
 					{
-						if(chip8->graphics[(x + xline + ((y + yline) * 64))] == 1)
+						if (chip8->graphics[(x + xline + ((y + yline) * 64))] == 1)
 						{
 							chip8->V[0xF] = 1;                                    
 						}
