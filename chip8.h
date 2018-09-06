@@ -9,7 +9,7 @@ struct Chip8
 {
 	uint8_t draw;
 	uint8_t graphics[64 * 32];
-	uint8_t  key[16];
+	uint8_t key[16];
 
 	uint16_t pc;			
 	uint16_t opcode;		
