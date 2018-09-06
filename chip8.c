@@ -31,19 +31,19 @@ void init(struct Chip8* chip8)
 	chip8->sp = 0;
 	chip8->instruction_num = 0;
 
-	for(int i = 0; i < 2048; i++)
+	for (int i = 0; i < 2048; i++)
 		chip8->graphics[i] = 0;
 		
-	for(int i = 0; i < 16; i++)
+	for (int i = 0; i < 16; i++)
 		chip8->stack[i] = 0;
 
-	for(int i = 0; i < 16; i++)
+	for (int i = 0; i < 16; i++)
 		chip8->key[i] = chip8->V[i] = 0;
 		
-	for(int i = 0; i < 4096; i++)
+	for (int i = 0; i < 4096; i++)
 		chip8->memory[i] = 0;
 	
-	for(int i = 0; i < 80; i++)
+	for (int i = 0; i < 80; i++)
 		chip8->memory[i] = fontset[i];		
 
 	chip8->delay_timer = 0;
@@ -58,10 +58,10 @@ void emulate_cycle(struct Chip8* chip8)
 {
 	chip8->opcode = chip8->memory[chip8->pc] << 8 | chip8->memory[chip8->pc + 1];
 	
-	switch(chip8->opcode & 0xF000)
+	switch (chip8->opcode & 0xF000)
 	{		
 		case 0x0000:
-			switch(chip8->opcode & 0x000F)
+			switch (chip8->opcode & 0x000F)
 			{
 			case 0x0000:
 				for(int i = 0; i < 2048; i++)
@@ -90,21 +90,21 @@ void emulate_cycle(struct Chip8* chip8)
 		break;
 		
 		case 0x3000:
-			if(chip8->V[(chip8->opcode & 0x0F00) >> 8] == (chip8->opcode & 0x00FF))
+			if (chip8->V[(chip8->opcode & 0x0F00) >> 8] == (chip8->opcode & 0x00FF))
 				chip8->pc += 4;
 			else
 				chip8->pc += 2;
 		break;
 		
 		case 0x4000:
-			if(chip8->V[(chip8->opcode & 0x0F00) >> 8] != (chip8->opcode & 0x00FF))
+			if (chip8->V[(chip8->opcode & 0x0F00) >> 8] != (chip8->opcode & 0x00FF))
 				chip8->pc += 4;
 			else
 				chip8->pc += 2;
 		break;
 		
 		case 0x5000:
-			if(chip8->V[(chip8->opcode & 0x0F00) >> 8] == chip8->V[(chip8->opcode & 0x00F0) >> 4])
+			if (chip8->V[(chip8->opcode & 0x0F00) >> 8] == chip8->V[(chip8->opcode & 0x00F0) >> 4])
 				chip8->pc += 4;
 			else
 				chip8->pc += 2;
@@ -121,7 +121,7 @@ void emulate_cycle(struct Chip8* chip8)
 		break;
 		
 		case 0x8000:
-			switch(chip8->opcode & 0x000F)
+			switch (chip8->opcode & 0x000F)
 			{
 			case 0x0000:
 				chip8->V[(chip8->opcode & 0x0F00) >> 8] = chip8->V[(chip8->opcode & 0x00F0) >> 4];
@@ -144,7 +144,7 @@ void emulate_cycle(struct Chip8* chip8)
 			break;
 
 			case 0x0004:					
-				if(chip8->V[(chip8->opcode & 0x00F0) >> 4] > (0xFF - chip8->V[(chip8->opcode & 0x0F00) >> 8])) 
+				if (chip8->V[(chip8->opcode & 0x00F0) >> 4] > (0xFF - chip8->V[(chip8->opcode & 0x0F00) >> 8])) 
 					chip8->V[0xF] = 1;
 				else 
 					chip8->V[0xF] = 0;
@@ -154,7 +154,7 @@ void emulate_cycle(struct Chip8* chip8)
 			break;
 
 			case 0x0005:
-				if(chip8->V[(chip8->opcode & 0x00F0) >> 4] > chip8->V[(chip8->opcode & 0x0F00) >> 8]) 
+				if (chip8->V[(chip8->opcode & 0x00F0) >> 4] > chip8->V[(chip8->opcode & 0x0F00) >> 8]) 
 					chip8->V[0xF] = 0;
 				else 
 					chip8->V[0xF] = 1;
@@ -170,7 +170,7 @@ void emulate_cycle(struct Chip8* chip8)
 			break;
 
 			case 0x0007:
-				if(chip8->V[(chip8->opcode & 0x0F00) >> 8] > chip8->V[(chip8->opcode & 0x00F0) >> 4])	// chip8->VY-chip8->VX
+				if (chip8->V[(chip8->opcode & 0x0F00) >> 8] > chip8->V[(chip8->opcode & 0x00F0) >> 4])	// chip8->VY-chip8->VX
 					chip8->V[0xF] = 0;
 				else
 					chip8->V[0xF] = 1;
@@ -188,7 +188,7 @@ void emulate_cycle(struct Chip8* chip8)
 		break;
 		
 		case 0x9000:
-			if(chip8->V[(chip8->opcode & 0x0F00) >> 8] != chip8->V[(chip8->opcode & 0x00F0) >> 4])
+			if (chip8->V[(chip8->opcode & 0x0F00) >> 8] != chip8->V[(chip8->opcode & 0x00F0) >> 4])
 				chip8->pc += 4;
 			else
 				chip8->pc += 2;
@@ -221,7 +221,7 @@ void emulate_cycle(struct Chip8* chip8)
 				pixel = chip8->memory[chip8->I + yline];
 				for(int xline = 0; xline < 8; xline++)
 				{
-					if((pixel & (0x80 >> xline)) != 0)
+					if ((pixel & (0x80 >> xline)) != 0)
 					{
 						if(chip8->graphics[(x + xline + ((y + yline) * 64))] == 1)
 						{
@@ -238,17 +238,17 @@ void emulate_cycle(struct Chip8* chip8)
 		break;
 			
 		case 0xE000:
-			switch(chip8->opcode & 0x00FF)
+			switch (chip8->opcode & 0x00FF)
 			{
 			case 0x009E:
-				if(chip8->key[chip8->V[(chip8->opcode & 0x0F00) >> 8]] != 0)
+				if (chip8->key[chip8->V[(chip8->opcode & 0x0F00) >> 8]] != 0)
 					chip8->pc += 4;
 				else
 					chip8->pc += 2;
 			break;
 			
 			case 0x00A1:
-				if(chip8->key[chip8->V[(chip8->opcode & 0x0F00) >> 8]] == 0)
+				if (chip8->key[chip8->V[(chip8->opcode & 0x0F00) >> 8]] == 0)
 					chip8->pc += 4;
 				else
 					chip8->pc += 2;
@@ -257,7 +257,7 @@ void emulate_cycle(struct Chip8* chip8)
 		break;
 		
 		case 0xF000:
-			switch(chip8->opcode & 0x00FF)
+			switch (chip8->opcode & 0x00FF)
 			{
 			case 0x0007:
 				chip8->V[(chip8->opcode & 0x0F00) >> 8] = chip8->delay_timer;
@@ -268,7 +268,7 @@ void emulate_cycle(struct Chip8* chip8)
 			{
 				uint8_t keyPress = 0;
 
-				for(int i = 0; i < 16; i++)
+				for (int i = 0; i < 16; i++)
 				{
 					if(chip8->key[i] != 0)
 					{
@@ -277,7 +277,7 @@ void emulate_cycle(struct Chip8* chip8)
 					}
 				}
 
-				if(!keyPress)						
+				if (!keyPress)						
 					return;
 
 				chip8->pc += 2;			
@@ -295,7 +295,7 @@ void emulate_cycle(struct Chip8* chip8)
 			break;
 
 			case 0x001E:
-				if(chip8->I + chip8->V[(chip8->opcode & 0x0F00) >> 8] > 0xFFF)	// chip8->VF is set to 1 when range overflow (chip8->I+chip8->VX>0xFFF), and 0 when there isn't.
+				if (chip8->I + chip8->V[(chip8->opcode & 0x0F00) >> 8] > 0xFFF)	// chip8->VF is set to 1 when range overflow (chip8->I+chip8->VX>0xFFF), and 0 when there isn't.
 					chip8->V[0xF] = 1;
 				else
 					chip8->V[0xF] = 0;
@@ -340,12 +340,12 @@ void emulate_cycle(struct Chip8* chip8)
 
 	if (chip8->instruction_num == 9)
 	{
-		if(chip8->delay_timer > 0)
+		if (chip8->delay_timer > 0)
 			chip8->delay_timer--;
 
-		if(chip8->sound_timer > 0)
+		if (chip8->sound_timer > 0)
 		{
-			if(chip8->sound_timer == 1)
+			if (chip8->sound_timer == 1)
 				Beep(750, 160);
 			chip8->sound_timer--;
 		}
@@ -356,11 +356,11 @@ void emulate_cycle(struct Chip8* chip8)
 
 void debug_render(struct Chip8* chip8)
 {
-	for(int y = 0; y < 32; y++)
+	for (int y = 0; y < 32; y++)
 	{
-		for(int x = 0; x < 64; x++)
+		for (int x = 0; x < 64; x++)
 		{
-			if(chip8->graphics[(y * 64) + x] == 0) 
+			if (chip8->graphics[(y * 64) + x] == 0) 
 				printf("O");
 			else 
 				printf(" ");
@@ -404,7 +404,7 @@ void load_rom(struct Chip8* chip8, const char * filename)
 		exit(-1);
 	}
 
-	if((4096 - 512) > fsize)
+	if ((4096 - 512) > fsize)
 	{
 		for(int i = 0; i < fsize; i++)
 			chip8->memory[i + 512] = buffer[i];
