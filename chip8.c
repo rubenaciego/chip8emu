@@ -219,7 +219,7 @@ void emulate_cycle(struct Chip8* chip8)
 			for (int yline = 0; yline < height; yline++)
 			{
 				pixel = chip8->memory[chip8->I + yline];
-				for(int xline = 0; xline < 8; xline++)
+				for (int xline = 0; xline < 8; xline++)
 				{
 					if ((pixel & (0x80 >> xline)) != 0)
 					{
